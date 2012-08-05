@@ -9,9 +9,7 @@ Each message has a 4 byte header followed by a variable length payload encoded i
 The header contains a single unsigned int that indicates the length (in bytes) of the payload.
 All messages use big-endian byte ordering.
 
-For more information on AMF:
-
-[http://en.wikipedia.org/wiki/Action_Message_Format](http://en.wikipedia.org/wiki/Action_Message_Format)
+For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format](http://en.wikipedia.org/wiki/Action_Message_Format)
 
 ## Copyright
 
