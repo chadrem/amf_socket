@@ -1,0 +1,10 @@
+.DS_Store
+*.swp
+*.swo
+.rvmrc
+*.swf
+*.swc
+.actionScriptProperties
+.settings
+.project
+.flexLibProperties
