@@ -9,10 +9,6 @@ package amfSocket
   public class RpcManager extends EventDispatcher
   {
     //
-    // Constants.
-    //
-
-    //
     // Instance variables.
     //
 
@@ -21,6 +17,7 @@ package amfSocket
     private var _socket:AmfSocket = null;
     private var _state:String = 'initialized'; // Valid states: initialized, disconnected, connected, failed, connecting, disposed.
     private var _reconnectTimer:Timer = null;
+    private var _nextMessageId:int = 0;
 
     //
     // Constructor.
@@ -35,10 +32,6 @@ package amfSocket
       _reconnectTimer = new Timer(3000, 0);
       _reconnectTimer.start();
     }
-
-    //
-    // Getters and setters.
-    //
 
     //
     // Public methods.
@@ -86,6 +79,14 @@ package amfSocket
       disconnect();
       _reconnectTimer.stop();
       _reconnectTimer = null;
+    }
+
+    public function request(command:String, ...args):RpcRequest {
+      var request:RpcRequest = new RpcRequest(_nextMessageId.toString(), this, command, args);
+
+      _nextMessageId++;
+
+      return request;
     }
 
     //
