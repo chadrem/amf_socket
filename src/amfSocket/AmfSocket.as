@@ -42,11 +42,13 @@ package amfSocket
     }
 
     public function disconnect():void {
-      if(!connected)
-        throw new Error('Can not disconnect a non-connected socket.')
+      if(_socket) {
+        removeEventListeners();
 
-      _socket.close();
-      removeEventListeners();
+        if(_socket.connected)
+          _socket.close();
+      }
+
       _socket = null;
     }
 
@@ -109,9 +111,8 @@ package amfSocket
     }
 
     private function socket_disconnect(event:Event):void {
-      _socket = null;
-
       removeEventListeners();
+      _socket = null;
 
       dispatchEvent(new AmfSocketEvent(AmfSocketEvent.DISCONNECTED));
     }
