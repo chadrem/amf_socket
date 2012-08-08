@@ -2,6 +2,7 @@ package amfSocket
 {
   import flash.events.EventDispatcher;
   import flash.events.TimerEvent;
+  import flash.utils.Dictionary;
   import flash.utils.Timer;
 
   import mx.messaging.channels.StreamingAMFChannel;
@@ -17,7 +18,7 @@ package amfSocket
     private var _socket:AmfSocket = null;
     private var _state:String = 'initialized'; // Valid states: initialized, disconnected, connected, failed, connecting, disposed.
     private var _reconnectTimer:Timer = null;
-    private var _nextMessageId:int = 0;
+    private var _requests:Dictionary = new Dictionary();
 
     //
     // Constructor.
@@ -81,12 +82,16 @@ package amfSocket
       _reconnectTimer = null;
     }
 
-    public function request(command:String, ...args):RpcRequest {
-      var request:RpcRequest = new RpcRequest(_nextMessageId.toString(), this, command, args);
+    public function deliver(request:RpcRequest):void {
+      _requests[request.messageId] = request;
 
-      _nextMessageId++;
+      var msg:Object = {}
+      msg.type = 'rpcRequest';
+      msg.request = {};
+      msg.request.command = request.command;
+      msg.request.params = request.params;
 
-      return request;
+      _socket.sendObject(msg);
     }
 
     //
