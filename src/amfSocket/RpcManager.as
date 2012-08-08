@@ -90,6 +90,7 @@ package amfSocket
       msg.request = {};
       msg.request.command = request.command;
       msg.request.params = request.params;
+      msg.request.messageId = request.messageId;
 
       _socket.sendObject(msg);
     }
@@ -152,10 +153,12 @@ package amfSocket
 
     private function socket_connected(event:AmfSocketEvent):void {
       _state = 'connected';
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.CONNECTED));
     }
 
     private function socket_disconnected(event:AmfSocketEvent):void {
       _state = 'disconnected';
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.DISCONNECTED));
     }
 
     private function socket_receivedObject(event:AmfSocketEvent):void {
@@ -163,10 +166,12 @@ package amfSocket
 
     private function socket_ioError(event:AmfSocketEvent):void {
       _state = 'failed';
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
     }
 
     private function socket_securityError(event:AmfSocketEvent):void {
       _state = 'failed';
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
     }
 
     private function reconnectTimer_timer(event:TimerEvent):void {
