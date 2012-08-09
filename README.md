@@ -39,7 +39,7 @@ For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format
 
 ## Server Implementations
 
-* [ruby](https://github.com/chadrem/amf_socket_ruby)
+* [Ruby](https://github.com/chadrem/amf_socket_ruby)
 
 ## Copyright
 
