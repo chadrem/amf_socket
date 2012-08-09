@@ -39,4 +39,4 @@ For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format
 
 ## Copyright
 
-Copyright (c) 2012 - 2012 Chad Remesch. See LICENSE for details.
+Copyright (c) 2012 Chad Remesch. See LICENSE for details.
