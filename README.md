@@ -1,4 +1,4 @@
-# AMF Socket
+# AMF Socket - Actionscript
 
 AMF Socket makes it easy for you to send/receive serialized objects over TCP/IP sockets.
 It is compatible with web, desktop, and mobile Flash applications.
@@ -36,6 +36,10 @@ The header contains a single unsigned int that indicates the length (in bytes) o
 All messages use big-endian byte ordering.
 
 For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format](http://en.wikipedia.org/wiki/Action_Message_Format)
+
+## Server Implementations
+
+* (ruby)[https://github.com/chadrem/amf_socket_ruby]
 
 ## Copyright
 
