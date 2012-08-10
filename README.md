@@ -1,9 +1,11 @@
-# AMF Socket
+# AMF Socket - Actionscript
 
-AMF Socket makes it easy for you to send/receive serialized objects over TCP/IP sockets.
-It is compatible with web, desktop, and mobile Flash applications.
+AMF Socket is a bi-directional RPC system for Adobe Flash (Actionscript) programs.
+This library aims to make high quality (and free) RPC accessible to all of the Flash platforms (web, mobile, and desktop).
+Using this library you can easily add event driven network functionality to your Flash applications without having to deal with the low level details.
+High performance and low latency is accomplished through the use of persistent TCP/IP sockets and Flash's native serialization format (AMF).
 
-## Example
+## Example (lower level AMF socket layer)
 
     var sock:AmfSocket = new AmfSocket('localhost', 9000);
     sock.addEventListener(AmfSocketEvent.CONNECTED, function(event:AmfSocketEvent):void {
@@ -29,6 +31,14 @@ It is compatible with web, desktop, and mobile Flash applications.
 
     sock.connect();
 
+## Example (Higher level RPC layer)
+
+    TODO: Coming soon.
+
+## Server Implementations
+
+* [Ruby](https://github.com/chadrem/amf_socket_ruby)
+
 ## Wire Protocol
 
 Each message has a 4 byte header followed by a variable length payload encoded in AMF verison 3.
@@ -39,4 +49,4 @@ For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format
 
 ## Copyright
 
-Copyright (c) 2012 - 2012 Chad Remesch. See LICENSE for details.
+Copyright (c) 2012 Chad Remesch. See LICENSE.txt for details.
