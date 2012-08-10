@@ -8,11 +8,11 @@ package amfSocket
     // Constants.
     //
 
-    public static const CONNECTED:String = "AMF_SOCKET_EVENT_CONNECTED";
-    public static const DISCONNECTED:String = "AMF_SOCKET_EVENT_DISCONNECTED";
-    public static const IO_ERROR:String = "AMF_SOCKET_EVENT_IO_ERROR";
-    public static const SECURITY_ERROR:String = "AMF_SOCKET_EVENT_SECURITY_ERROR";
-    public static const RECEIVED_OBJECT:String = "AMF_SOCKET_EVENT_RECEIVED_OBJECT";
+    public static const CONNECTED:String = 'AMF_SOCKET_EVENT_CONNECTED';
+    public static const DISCONNECTED:String = 'AMF_SOCKET_EVENT_DISCONNECTED';
+    public static const IO_ERROR:String = 'AMF_SOCKET_EVENT_IO_ERROR';
+    public static const SECURITY_ERROR:String = 'AMF_SOCKET_EVENT_SECURITY_ERROR';
+    public static const RECEIVED_OBJECT:String = 'AMF_SOCKET_EVENT_RECEIVED_OBJECT';
 
     //
     // Instance variables.
@@ -29,5 +29,11 @@ package amfSocket
 
       super(type, bubbles, cancelable);
     }
+
+    //
+    // Getters and setters.
+    //
+
+    public function get data():Object { return _data; }
   }
 }

@@ -18,6 +18,7 @@ package amfSocket
     private var _command:String = null;
     private var _params:Object = null;
     private var _state:String = 'initialized' // Valid states: initialized, delivered, completed, failed.
+    private var _rpcManager:RpcManager = null;
 
     //
     // Constructor.
@@ -29,6 +30,7 @@ package amfSocket
       _command = command;
       _params = params;
       _messageId = genMessageId();
+      _rpcManager = rpcManager;
     }
 
     //
@@ -58,6 +60,12 @@ package amfSocket
 
     public function isFailed():Boolean {
       return isState('failed');
+    }
+
+    // Even though this is a public method, it should only be called by the RPC Manager.
+    // Your user code should never call this method directly.
+    public function __signalSuccess__(object:Object):void {
+
     }
 
     //

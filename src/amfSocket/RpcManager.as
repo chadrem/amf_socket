@@ -147,6 +147,43 @@ package amfSocket
       __connect();
     }
 
+    private function isValidRpcResponse(data:Object):Boolean {
+      if(!(data is Object))
+        return false;
+
+      if(data.type != 'rpcResponse')
+        return false;
+
+      if(!data.hasOwnProperty('response'))
+        return false;
+
+      if(!(data.response is Object))
+        return false;
+
+      if(!data.response.hasOwnProperty('command'))
+        return false;
+
+      if(!(data.response.command is String))
+        return false;
+
+      if(!data.response.hasOwnProperty('params'))
+        return false;
+
+      if(!(data.response.params is Object))
+        return false;
+
+      if(!data.response.hasOwnProperty('messageId'))
+        return false;
+
+      if(!(data.response.messageId is String))
+        return false;
+
+      if(!_requests.hasOwnProperty(data.response.messageId))
+        return false;
+
+      return true;
+    }
+
     //
     // Event handlers.
     //
@@ -162,6 +199,10 @@ package amfSocket
     }
 
     private function socket_receivedObject(event:AmfSocketEvent):void {
+      if(isValidRpcResponse(event.data))
+        trace(5);
+
+//      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_RPC, event.data));
     }
 
     private function socket_ioError(event:AmfSocketEvent):void {

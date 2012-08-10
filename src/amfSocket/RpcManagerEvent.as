@@ -8,9 +8,10 @@ package amfSocket
     // Constants.
     //
 
-    public static const CONNECTED:String = "RPC_MANAGER_EVENT_CONNECTED";
-    public static const DISCONNECTED:String = "RPC_MANAGER_EVENT_DISCONNECTED";
-    public static const FAILED:String = "RPC_MANAGER_EVENT_FAILED";
+    public static const CONNECTED:String = 'RPC_MANAGER_EVENT_CONNECTED';
+    public static const DISCONNECTED:String = 'RPC_MANAGER_EVENT_DISCONNECTED';
+    public static const FAILED:String = 'RPC_MANAGER_EVENT_FAILED';
+//    public static const RECEIVED_RPC:String = 'RPC_MANAGER_EVENT_RECEIVED_RPC';
 
     //
     // Instance variables.
@@ -27,5 +28,11 @@ package amfSocket
 
       super(type, bubbles, cancelable);
     }
+
+    //
+    // Getters and setters.
+    //
+
+    public function get data():Object { return _data; }
   }
 }
