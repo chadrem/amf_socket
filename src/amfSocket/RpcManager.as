@@ -93,6 +93,8 @@ package amfSocket
       msg.request.messageId = request.messageId;
 
       _socket.sendObject(msg);
+
+      request.__signalDelivered__();
     }
 
     //
@@ -160,22 +162,16 @@ package amfSocket
       if(!(data.response is Object))
         return false;
 
-      if(!data.response.hasOwnProperty('command'))
-        return false;
-
-      if(!(data.response.command is String))
-        return false;
-
-      if(!data.response.hasOwnProperty('params'))
-        return false;
-
-      if(!(data.response.params is Object))
-        return false;
-
       if(!data.response.hasOwnProperty('messageId'))
         return false;
 
       if(!(data.response.messageId is String))
+        return false;
+
+      if(!data.response.hasOwnProperty('result'))
+        return false;
+
+      if(!(data.response.result is String))
         return false;
 
       if(!_requests.hasOwnProperty(data.response.messageId))
@@ -199,10 +195,12 @@ package amfSocket
     }
 
     private function socket_receivedObject(event:AmfSocketEvent):void {
-      if(isValidRpcResponse(event.data))
-        trace(5);
+      var data:Object = event.data;
 
-//      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_RPC, event.data));
+      if(isValidRpcResponse(data)) {
+        var request:RpcRequest = _requests[data.response.messageId];
+        request.__signalSucceeded__(data.response.result);
+      }
     }
 
     private function socket_ioError(event:AmfSocketEvent):void {

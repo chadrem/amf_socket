@@ -11,7 +11,6 @@ package amfSocket
     public static const CONNECTED:String = 'RPC_MANAGER_EVENT_CONNECTED';
     public static const DISCONNECTED:String = 'RPC_MANAGER_EVENT_DISCONNECTED';
     public static const FAILED:String = 'RPC_MANAGER_EVENT_FAILED';
-//    public static const RECEIVED_RPC:String = 'RPC_MANAGER_EVENT_RECEIVED_RPC';
 
     //
     // Instance variables.

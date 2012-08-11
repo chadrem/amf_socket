@@ -17,7 +17,7 @@ package amfSocket
     private var _manager:RpcManager = null;
     private var _command:String = null;
     private var _params:Object = null;
-    private var _state:String = 'initialized' // Valid states: initialized, delivered, completed, failed.
+    private var _state:String = 'initialized' // Valid states: initialized, delivered, succeeded, failed.
     private var _rpcManager:RpcManager = null;
 
     //
@@ -30,7 +30,6 @@ package amfSocket
       _command = command;
       _params = params;
       _messageId = genMessageId();
-      _rpcManager = rpcManager;
     }
 
     //
@@ -62,10 +61,35 @@ package amfSocket
       return isState('failed');
     }
 
-    // Even though this is a public method, it should only be called by the RPC Manager.
-    // Your user code should never call this method directly.
-    public function __signalSuccess__(object:Object):void {
+    //
+    // Signals.
+    // Even though these are public, it should only be called by the RPC Manager.
+    // Your user code should never call them directly.
+    //
 
+    public function __signalDelivered__():void {
+      if(isInitialized())
+        _state = 'delivered'
+      else
+        throw new Error("Received 'delivered' signal an already delivered RPC request.");
+    }
+
+    public function __signalSucceeded__(object:Object):void {
+      if(isDelivered()) {
+        _state = 'succeeded';
+        dispatchEvent(new RpcRequestEvent(RpcRequestEvent.SUCCEEDED, object));
+      }
+      else
+        throw new Error("Received 'succeeded' signal when not in 'delivered' state.");
+    }
+
+    public function __signalFailed__(reason:String=null):void {
+      if(isDelivered()) {
+        _state = 'failed';
+        dispatchEvent(new RpcRequestEvent(RpcRequestEvent.FAILED, reason));
+      }
+      else
+        throw new Error("Received 'failed' signal when not in 'delivered' state.");
     }
 
     //
@@ -91,9 +115,5 @@ package amfSocket
 
       return messageId;
     }
-
-    //
-    // Event handlers.
-    //
   }
 }
