@@ -10,22 +10,24 @@ See Class Mapper details below for more information on serializing custom classe
 ## Example (Higher level AMF RPC layer)
 
 This is the API layer you normally use in your applications.
-It hides all of the networking details and presents you with a simple API for making requests to your server.
+It hides all of the networking details and presents you with a simple API for both requests and messages.
 
     var manager:RpcManager = new RpcManager('localhost', 9000);
 
     manager.addEventListener(RpcManagerEvent.CONNECTED, function(event:RpcManagerEvent):void {
+      // REQUEST: Requests follow the request/response pattern similar to HTTP.
       var request:RpcRequest = new RpcRequest('hello', {'someData': ['foobar', 5]});
 
-      request.addEventListener(RpcRequestEvent.SUCCEEDED, function(event:RpcRequestEvent):void {
-        trace('success');
-      });
-
-      request.addEventListener(RpcRequestEvent.FAILED, function(event:RpcRequestEvent):void {
-        trace('failure');
+      request.addEventListener(RpcObjectEvent.SUCCEEDED, function(event:RpcObjectEvent):void {
+        trace(event.data); // Result send back from the server.
       });
 
       manager.deliver(request);
+
+      // MESSAGE: Messages are fire and forget.
+      var message:RpcMessage = new RpcMessage('hello', {'someData': ['foobar', 5]});
+
+      manager.deliver(message);
     });
 
     manager.connect();
@@ -87,7 +89,6 @@ In order to use class mapping, you must must perform a number of steps for each 
 * Periodic heartbeats for detecting failed connections.
 * Automatic latency computation (useful for games that want to display a ping time).
 * RPC timeouts (global and per request).
-* Fire and forget messages in the RPC layer (currently the RPC layer is request/response only).
 * Auto disconnect/reconnect based on heartbeats (important for low quality mobile networks).
 
 ## Server Implementations

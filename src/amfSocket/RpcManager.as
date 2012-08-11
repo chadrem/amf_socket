@@ -82,19 +82,14 @@ package amfSocket
       _reconnectTimer = null;
     }
 
-    public function deliver(request:RpcRequest):void {
-      _requests[request.messageId] = request;
+    public function deliver(rpcObject:RpcObject):void {
+      if(rpcObject.hasOwnProperty('__signalSucceeded__'))
+        _requests[rpcObject.messageId] = rpcObject;
 
-      var msg:Object = {}
-      msg.type = 'rpcRequest';
-      msg.request = {};
-      msg.request.command = request.command;
-      msg.request.params = request.params;
-      msg.request.messageId = request.messageId;
+      var object:Object = rpcObject.toObject();
+      _socket.sendObject(object);
 
-      _socket.sendObject(msg);
-
-      request.__signalDelivered__();
+      rpcObject.__signalDelivered__();
     }
 
     //
