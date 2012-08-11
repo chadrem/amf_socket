@@ -31,7 +31,7 @@ It hides all of the networking details and presents you with a simple API for ma
 ## Example (lower level AMF socket layer)
 
 The lower layer is responsible for sending and receiving messages over the network.
-You normally you should let the RPC layer take care of these lower level details for you.
+You normally let the RPC layer take care of these details for you.
 
     var sock:AmfSocket = new AmfSocket('localhost', 9000);
     sock.addEventListener(AmfSocketEvent.CONNECTED, function(event:AmfSocketEvent):void {
