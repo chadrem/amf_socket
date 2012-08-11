@@ -4,6 +4,8 @@ AMF Socket is a bi-directional RPC system for Adobe Flash (Actionscript) program
 This library aims to make high quality and free RPC accessible to all of the Flash platforms (web, mobile, and desktop).
 Using this library you can easily add event driven network functionality to your Flash applications without having to deal with the low level details.
 High performance and low latency is accomplished through the use of persistent TCP/IP sockets and Flash's native serialization format (AMF).
+Due to the use of AMF, you can send primitives, hashes, arrays, and even your custom classes over the network with minimal effort.
+See Class Mapper details below for more information on serializing custom classes.
 
 ## Example (Higher level AMF RPC layer)
 
@@ -32,6 +34,8 @@ It hides all of the networking details and presents you with a simple API for ma
 
 The lower layer is responsible for sending and receiving messages over the network.
 You normally let the RPC layer take care of these details for you.
+The main advantage of using this layer directly is slightly less overhead.
+It allows you to quickly implement 'fire and forget' style network protocols.
 
     var sock:AmfSocket = new AmfSocket('localhost', 9000);
     sock.addEventListener(AmfSocketEvent.CONNECTED, function(event:AmfSocketEvent):void {
@@ -56,6 +60,33 @@ You normally let the RPC layer take care of these details for you.
     });
 
     sock.connect();
+
+## Class Mapper
+
+AMF has built in support for custom class mapping.
+This is a great feature that isn't available by default in many other serialization formats (such as JSON).
+By using it you will save time and and write less boilerplate code.
+In order to use class mapping, you must must perform a number of steps for each of the classes you want to be able to send and receive:
+
+* Map your class in Actionscript:
+
+    // Pure Actionscript example:
+    registerClassAlias("com.some.namespace.CoolClass", CoolClass);
+
+    // Flex example:
+    [RemoteClass(alias="com.some.namespace.CoolClass")]
+    public class CoolClass {
+    }
+
+* Map your class in the server code (details are specific to each server side implementation of AMF).
+
+* Create appopriate instance variables, getters, and setters (these will be serialized).
+
+## Future Features
+
+* Periodic heartbeats for detecting failed connections.
+* Automatic latency computation (useful for games that want to display a ping time).
+* RPC timeouts (global and per request).
 
 ## Server Implementations
 
