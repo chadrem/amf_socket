@@ -68,7 +68,7 @@ This is a great feature that isn't available by default in many other serializat
 By using it you will save time and and write less boilerplate code.
 In order to use class mapping, you must must perform a number of steps for each of the classes you want to be able to send and receive:
 
-* Map your class in Actionscript:
+1. Map your class in Actionscript:
 
     // Pure Actionscript example:
     registerClassAlias("com.some.namespace.CoolClass", CoolClass);
@@ -78,9 +78,9 @@ In order to use class mapping, you must must perform a number of steps for each 
     public class CoolClass {
     }
 
-* Map your class in the server code (details are specific to each server side implementation of AMF).
+2. Map your class in the server code (details are specific to each server side implementation of AMF).
 
-* Create appopriate instance variables, getters, and setters (these will be serialized).
+3. Create appopriate instance variables, getters, and setters (these will be serialized).
 
 ## Future Features
 
