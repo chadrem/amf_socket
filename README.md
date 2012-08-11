@@ -59,6 +59,9 @@ You normally you should let the RPC layer take care of these lower level details
 
 ## Server Implementations
 
+Contact me if you are interested in building server implementations.
+The current list of implementations can be found below:
+
 * [Ruby](https://github.com/chadrem/amf_socket_ruby)
 
 ## Wire Protocol
