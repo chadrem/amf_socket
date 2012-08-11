@@ -88,6 +88,7 @@ In order to use class mapping, you must must perform a number of steps for each 
 * Automatic latency computation (useful for games that want to display a ping time).
 * RPC timeouts (global and per request).
 * Fire and forget messages in the RPC layer (currently the RPC layer is request/response only).
+* Auto disconnect/reconnect based on heartbeats (important for low quality mobile networks).
 
 ## Server Implementations
 
