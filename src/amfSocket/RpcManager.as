@@ -138,10 +138,19 @@ package amfSocket
 
     private function __disconnect():void {
       _state = 'disconnected';
+      cleanUp('disconnect');
+    }
 
+    private function cleanUp(reason:String=null):void {
       removeEventListeners();
       _socket.disconnect();
       _socket = null;
+
+      for(var messageId:String in _requests) {
+        var request:RpcRequest = _requests[messageId];
+        request.__signalFailed__(reason);
+        delete _requests[messageId];
+      }
     }
 
     private function reconnect():void {
@@ -192,6 +201,7 @@ package amfSocket
     private function socket_disconnected(event:AmfSocketEvent):void {
       _state = 'disconnected';
       dispatchEvent(new RpcManagerEvent(RpcManagerEvent.DISCONNECTED));
+      cleanUp();
     }
 
     private function socket_receivedObject(event:AmfSocketEvent):void {
@@ -199,6 +209,7 @@ package amfSocket
 
       if(isValidRpcResponse(data)) {
         var request:RpcRequest = _requests[data.response.messageId];
+        delete _requests[data.response.messageId];
         request.__signalSucceeded__(data.response.result);
       }
     }
@@ -206,11 +217,13 @@ package amfSocket
     private function socket_ioError(event:AmfSocketEvent):void {
       _state = 'failed';
       dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
+      cleanUp('ioError');
     }
 
     private function socket_securityError(event:AmfSocketEvent):void {
       _state = 'failed';
       dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
+      cleanUp('securityError');
     }
 
     private function reconnectTimer_timer(event:TimerEvent):void {
