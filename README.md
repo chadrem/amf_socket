@@ -70,13 +70,13 @@ In order to use class mapping, you must must perform a number of steps for each 
 
 * Map your class in Actionscript:
 
-      // Pure Actionscript example:
-      registerClassAlias("com.some.namespace.CoolClass", CoolClass);
+        // Pure Actionscript example:
+        registerClassAlias("com.some.namespace.CoolClass", CoolClass);
 
-      // Flex example:
-      [RemoteClass(alias="com.some.namespace.CoolClass")]
-      public class CoolClass {
-      }
+        // Flex example:
+        [RemoteClass(alias="com.some.namespace.CoolClass")]
+        public class CoolClass {
+        }
 
 * Map your class in the server code (details are specific to each server side implementation of AMF).
 
