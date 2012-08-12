@@ -70,7 +70,7 @@ Depending on your application, you can choose to use one or both at the same tim
 Requests are designed to work similar to HTTP.
 An endpoint (either your client or your server) can make a request to the other end of the connection.
 The other end is then responsible for replying.
-This works great when you need to an endpoint a question and you are willing to wait for a response.
+This works great sending a question to an endpoint and you are willing to wait for a response.
 An example use case is asking your server to send back the results of a database query.
 
 ### Messages
