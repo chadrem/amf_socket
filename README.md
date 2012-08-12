@@ -15,19 +15,48 @@ It hides all of the networking details and presents you with a simple API for bo
     var manager:RpcManager = new RpcManager('localhost', 9000);
 
     manager.addEventListener(RpcManagerEvent.CONNECTED, function(event:RpcManagerEvent):void {
-      // REQUEST: Requests follow the request/response pattern similar to HTTP.
+      trace('connected');
+
+      //
+      // SEND REQUEST: Requests follow the request/response pattern similar to HTTP.
+      //
       var request:RpcRequest = new RpcRequest('hello', {'someData': ['foobar', 5]});
 
       request.addEventListener(RpcObjectEvent.SUCCEEDED, function(event:RpcObjectEvent):void {
-        trace(event.data); // Result send back from the server.
+        trace(event.data);  // Reply sent from the server.
+      });
+
+      request.addEventListener(RpcObjectEvent.FAILED, function(event:RpcObjectEvent):void {
+        trace('request failure');
       });
 
       manager.deliver(request);
 
-      // MESSAGE: Messages are fire and forget.
+      //
+      // SEND MESSAGE: Messages are fire and forget.
+      //
       var message:RpcMessage = new RpcMessage('hello', {'someData': ['foobar', 5]});
 
+      request.addEventListener(RpcObjectEvent.FAILED, function(event:RpcObjectEvent):void {
+        trace('message failure');
+      });
+
       manager.deliver(message);
+    });
+
+    //
+    // RECEIVE REQUEST: Receive a request from the server.  AmfSocket is bi-directional.
+    //
+    manager.addEventListener(RpcManagerEvent.RECEIVED_REQUEST, function(event:RpcManagerEvent):void {
+      trace(event.data); // Received request.
+      manager.respond(event.data as RpcReceivedRequest, 'yeeeeeehawww!');
+    });
+
+    //
+    // RECEIVE MESSAGE: Receive a message from the server.  No need to reply.
+    //
+    manager.addEventListener(RpcManagerEvent.RECEIVED_MESSAGE, function(event:RpcManagerEvent):void {
+      trace(event.data); // Received message.
     });
 
     manager.connect();

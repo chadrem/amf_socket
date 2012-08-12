@@ -1,4 +1,4 @@
-package amfSocket
+package amfSocket.events
 {
   import flash.events.Event;
 
@@ -11,6 +11,8 @@ package amfSocket
     public static const CONNECTED:String = 'RPC_MANAGER_EVENT_CONNECTED';
     public static const DISCONNECTED:String = 'RPC_MANAGER_EVENT_DISCONNECTED';
     public static const FAILED:String = 'RPC_MANAGER_EVENT_FAILED';
+    public static const RECEIVED_REQUEST:String = 'RPC_MANAGER_RECEIVED_REQUEST';
+    public static const RECEIVED_MESSAGE:String = 'RPC_MANAGER_RECEIVED_MESSAGE';
 
     //
     // Instance variables.

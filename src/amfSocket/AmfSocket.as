@@ -7,6 +7,7 @@ package amfSocket
   import flash.events.SecurityErrorEvent;
   import flash.net.Socket;
   import flash.utils.ByteArray;
+  import amfSocket.events.AmfSocketEvent;
 
   public class AmfSocket extends EventDispatcher
   {

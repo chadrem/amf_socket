@@ -1,6 +1,7 @@
 package amfSocket
 {
   import flash.events.EventDispatcher;
+  import amfSocket.events.RpcObjectEvent;
 
   public class RpcObject extends EventDispatcher
   {
@@ -8,10 +9,10 @@ package amfSocket
     // Instance variables.
     //
 
-    protected var _messageId:String = null;
-    protected var _command:String = null;
-    protected var _params:Object = null;
-    protected var _state:String = 'initialized'; // Valid states: initialized, delivered, succeeded, failed.
+    private var _messageId:String = null;
+    private var _command:String = null;
+    private var _params:Object = null;
+    private var _state:String = 'initialized'; // Valid states: initialized, delivered, succeeded, failed.
 
     //
     // Constructor.
@@ -33,10 +34,21 @@ package amfSocket
     // Getters and setters.
     //
 
+    public function set messageId(value:String):void { _messageId = value; }
     public function get messageId():String { return _messageId; }
+
+    public function set command(value:String):void { _command = value; }
     public function get command():String { return _command; }
+
+    public function set params(value:Object):void { _params = value; }
     public function get params():Object { return _params; }
+
+    public function set state(value:String):void { _state = value; }
     public function get state():String { return _state; }
+
+    //
+    // Public methods.
+    //
 
     public function isInitialized():Boolean {
       return isState('initialized');

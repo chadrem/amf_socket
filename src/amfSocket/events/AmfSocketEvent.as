@@ -1,4 +1,4 @@
-package amfSocket
+package amfSocket.events
 {
   import flash.events.Event;
 

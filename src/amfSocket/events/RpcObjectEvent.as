@@ -1,4 +1,4 @@
-package amfSocket
+package amfSocket.events
 {
   import flash.events.Event;
 
@@ -8,9 +8,9 @@ package amfSocket
     // Constants.
     //
 
-    public static const DELIVERED:String = 'RPC_REQUEST_EVENT_DELIVERED';
-    public static const SUCCEEDED:String = 'RPC_REQUEST_EVENT_SUCCEEDED';
-    public static const FAILED:String = 'RPC_REQUEST_EVENT_FAILED';
+    public static const DELIVERED:String = 'RPC_OBJECT_EVENT_DELIVERED';
+    public static const SUCCEEDED:String = 'RPC_OBJECT_EVENT_SUCCEEDED';
+    public static const FAILED:String = 'RPC_OBJECT_EVENT_FAILED';
 
     //
     // Instance variables.
@@ -27,5 +27,11 @@ package amfSocket
 
       super(type, bubbles, cancelable);
     }
+
+    //
+    // Getters and setters.
+    //
+
+    public function get data():Object { return _data; }
   }
 }

@@ -1,5 +1,7 @@
 package amfSocket
 {
+  import amfSocket.events.RpcObjectEvent;
+
   public class RpcRequest extends RpcObject
   {
     //
@@ -24,11 +26,13 @@ package amfSocket
 
     //
     // Signals.
+    // Even though these are public, they should only be called by the RPC Manager.
+    // Your user code should never call them directly.
     //
 
     public function __signalSucceeded__(object:Object):void {
       if(isDelivered()) {
-        _state = 'succeeded';
+        state = 'succeeded';
         dispatchEvent(new RpcObjectEvent(RpcObjectEvent.SUCCEEDED, object));
       }
       else

@@ -1,5 +1,8 @@
 package amfSocket
 {
+  import amfSocket.events.AmfSocketEvent;
+  import amfSocket.events.RpcManagerEvent;
+
   import flash.events.EventDispatcher;
   import flash.events.TimerEvent;
   import flash.utils.Dictionary;
@@ -92,11 +95,25 @@ package amfSocket
       rpcObject.__signalDelivered__();
     }
 
+    public function respond(request:RpcReceivedRequest, result:Object):void {
+      if(!request.isInitialized())
+        throw new Error('You must only reply to a request one time.');
+
+      var object:Object = {}
+
+      object.type = 'rpcResponse';
+      object.response = {};
+      object.response.messageId = request.messageId;
+      object.response.result = result;
+
+      _socket.sendObject(object);
+    }
+
     //
     // Private methods.
     //
 
-    private function isState(state:String):Boolean {
+    protected function isState(state:String):Boolean {
       if(_state == state)
         return true;
       else
@@ -184,6 +201,75 @@ package amfSocket
       return true;
     }
 
+    private function isValidRpcRequest(data:Object):Boolean {
+      if(!(data is Object))
+        return false;
+
+      if(data.type != 'rpcRequest')
+        return false;
+
+      if(!data.hasOwnProperty('request'))
+        return false;
+
+      if(!(data.request is Object))
+        return false;
+
+      if(!data.request.hasOwnProperty('messageId'))
+        return false;
+
+      if(!(data.request.messageId is String))
+        return false;
+
+      if(!data.request.hasOwnProperty('command'))
+        return false;
+
+      if(!(data.request.command is String))
+        return false;
+
+      if(!data.request.hasOwnProperty('params'))
+        return false;
+
+      if(!(data.request.params is Object))
+        return false;
+
+
+      return true;
+    }
+
+    private function isValidRpcMessage(data:Object):Boolean {
+      if(!(data is Object))
+        return false;
+
+      if(data.type != 'rpcMessage')
+        return false;
+
+      if(!data.hasOwnProperty('message'))
+        return false;
+
+      if(!(data.message is Object))
+        return false;
+
+      if(!data.message.hasOwnProperty('messageId'))
+        return false;
+
+      if(!(data.message.messageId is String))
+        return false;
+
+      if(!data.message.hasOwnProperty('command'))
+        return false;
+
+      if(!(data.message.command is String))
+        return false;
+
+      if(!data.message.hasOwnProperty('params'))
+        return false;
+
+      if(!(data.message.params is Object))
+        return false;
+
+      return true;
+    }
+
     //
     // Event handlers.
     //
@@ -206,6 +292,14 @@ package amfSocket
         var request:RpcRequest = _requests[data.response.messageId];
         delete _requests[data.response.messageId];
         request.__signalSucceeded__(data.response.result);
+      }
+      else if(isValidRpcRequest(data)) {
+        var received_request:RpcReceivedRequest = new RpcReceivedRequest(data);
+        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, received_request));
+      }
+      else if(isValidRpcMessage(data)) {
+        var received_message:RpcReceivedMessage = new RpcReceivedMessage(data);
+        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, received_message));
       }
     }
 
