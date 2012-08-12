@@ -61,6 +61,23 @@ It hides all of the networking details and presents you with a simple API for bo
 
     manager.connect();
 
+## Requests VS Messages
+
+AMF Socket has two fundamental forms of communcation.
+Depending on your application, you want to use or both of them.
+
+### Requests
+Requests are designed to work similar to HTTP.
+An endpoint (either your client or your server) can make a request to the other end of the connection.
+The other end is then responsible for replying.
+This works great when you need to an endpoint a question and you are willing to wait for a response.
+An example use case is asking your server to send back the results of a database query.
+
+### Messages
+Messages are fire and forget.
+Unlike requests, you can't respond to a message.
+Use cases include push notifications, chat messages, and stock tickers.
+
 ## Example (lower level AMF socket layer)
 
 The lower layer is responsible for sending and receiving messages over the network.
