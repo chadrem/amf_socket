@@ -64,7 +64,7 @@ It hides all of the networking details and presents you with a simple API for bo
 ## Requests VS Messages
 
 AMF Socket has two fundamental forms of communcation.
-Depending on your application, you want to use or both of them.
+Depending on your application, you can choose to use one or both at the same time.
 
 ### Requests
 Requests are designed to work similar to HTTP.
