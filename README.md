@@ -37,10 +37,6 @@ It hides all of the networking details and presents you with a simple API for bo
       //
       var message:RpcMessage = new RpcMessage('hello', {'someData': ['foobar', 5]});
 
-      request.addEventListener(RpcObjectEvent.FAILED, function(event:RpcObjectEvent):void {
-        trace('message failure');
-      });
-
       manager.deliver(message);
     });
 
