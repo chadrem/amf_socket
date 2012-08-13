@@ -34,6 +34,7 @@ package amfSocket
       _port = port;
 
       _reconnectTimer = new Timer(3000, 0);
+      _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
       _reconnectTimer.start();
     }
 
@@ -81,6 +82,7 @@ package amfSocket
 
     public function dispose():void {
       disconnect();
+      _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
       _reconnectTimer.stop();
       _reconnectTimer = null;
     }
@@ -120,31 +122,27 @@ package amfSocket
         return false;
     }
 
-    private function addEventListeners():void {
+    private function addSocketEventListeners():void {
       _socket.addEventListener(AmfSocketEvent.CONNECTED, socket_connected);
       _socket.addEventListener(AmfSocketEvent.DISCONNECTED, socket_disconnected);
       _socket.addEventListener(AmfSocketEvent.RECEIVED_OBJECT, socket_receivedObject);
       _socket.addEventListener(AmfSocketEvent.IO_ERROR, socket_ioError);
       _socket.addEventListener(AmfSocketEvent.SECURITY_ERROR, socket_securityError);
-
-      _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
     }
 
-    private function removeEventListeners():void {
+    private function removeSocketEventListeners():void {
       _socket.removeEventListener(AmfSocketEvent.CONNECTED, socket_connected);
       _socket.removeEventListener(AmfSocketEvent.DISCONNECTED, socket_disconnected);
       _socket.removeEventListener(AmfSocketEvent.RECEIVED_OBJECT, socket_receivedObject);
       _socket.removeEventListener(AmfSocketEvent.IO_ERROR, socket_ioError);
       _socket.removeEventListener(AmfSocketEvent.SECURITY_ERROR, socket_securityError);
-
-      _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
     }
 
     private function __connect():void {
       _state = 'connecting';
 
       _socket = new AmfSocket(_host, _port);
-      addEventListeners();
+      addSocketEventListeners();
       _socket.connect();
     }
 
@@ -154,9 +152,11 @@ package amfSocket
     }
 
     private function cleanUp(reason:String=null):void {
-      removeEventListeners();
-      _socket.disconnect();
-      _socket = null;
+      if(!_socket) {
+        removeSocketEventListeners();
+        _socket.disconnect();
+        _socket = null;
+      }
 
       for(var messageId:String in _requests) {
         var request:RpcRequest = _requests[messageId];
