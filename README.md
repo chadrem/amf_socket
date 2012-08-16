@@ -1,11 +1,11 @@
 # AMF Socket - Actionscript
 
-AMF Socket is a bi-directional RPC system for Adobe Flash (Actionscript) programs.
+AMF Socket is a bi-directional remote procedure call (RPC) system for Adobe Actionscript programs.
 This library aims to make high quality and free RPC accessible to all of the Flash platforms (web, mobile, and desktop).
 Using this library you can easily add event driven network functionality to your Flash applications without having to deal with the low level details.
 High performance and low latency is accomplished through the use of persistent TCP/IP sockets and Flash's native serialization format (AMF).
-Due to the use of AMF, you can send primitives, hashes, arrays, and even your custom classes over the network with minimal effort.
-See Class Mapper details below for more information on serializing custom classes.
+Due to the use of AMF, you can send primitives, hashes, arrays, and even your custom classes over the network.
+AMF Socket tries to be the "easy button" for Flash networking by hiding as many details as possible.
 
 ## Example (Higher level AMF RPC layer)
 
