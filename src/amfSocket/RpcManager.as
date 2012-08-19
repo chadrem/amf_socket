@@ -112,10 +112,22 @@ package amfSocket
     }
 
     //
+    // Protected methods.
+    //
+
+    protected function received_message_handler(message:RpcReceivedMessage):void {
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, message));
+    }
+
+    protected function received_request_handler(request:RpcReceivedRequest):void {
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, request));
+    }
+
+    //
     // Private methods.
     //
 
-    protected function isState(state:String):Boolean {
+    private function isState(state:String):Boolean {
       if(_state == state)
         return true;
       else
@@ -295,11 +307,11 @@ package amfSocket
       }
       else if(isValidRpcRequest(data)) {
         var received_request:RpcReceivedRequest = new RpcReceivedRequest(data);
-        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, received_request));
+        received_request_handler(received_request);
       }
       else if(isValidRpcMessage(data)) {
         var received_message:RpcReceivedMessage = new RpcReceivedMessage(data);
-        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, received_message));
+        received_message_handler(received_message);
       }
     }
 
