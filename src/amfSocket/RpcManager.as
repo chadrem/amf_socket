@@ -116,11 +116,11 @@ package amfSocket
     //
 
     protected function received_message_handler(message:RpcReceivedMessage):void {
-      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, message));
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, request));
     }
 
     protected function received_request_handler(request:RpcReceivedRequest):void {
-      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, request));
+      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, message));
     }
 
     //
