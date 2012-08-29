@@ -18,6 +18,7 @@ package amfSocket
 
     private var _host:String = null;
     private var _port:int = 0;
+    private var _options:Object;
     private var _socket:AmfSocket = null;
     private var _state:String = 'initialized'; // Valid states: initialized, disconnected, connected, failed, connecting, disposed.
     private var _reconnectTimer:Timer = null;
@@ -27,15 +28,24 @@ package amfSocket
     // Constructor.
     //
 
-    public function RpcManager(host:String, port:int) {
+    public function RpcManager(host:String, port:int, options:Object=null) {
       super();
 
       _host = host;
-      _port = port;
+      _port  = port;
+      _options = options;
 
-      _reconnectTimer = new Timer(3000, 0);
-      _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
-      _reconnectTimer.start();
+      if(options == null)
+        options = {};
+
+      if(options['autoReconnect'] == null)
+        options['autoReconnect'] = true
+
+      if(options['autoReconnect']) {
+        _reconnectTimer = new Timer(3000, 0);
+        _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
+        _reconnectTimer.start();
+      }
     }
 
     //
@@ -82,9 +92,12 @@ package amfSocket
 
     public function dispose():void {
       disconnect();
-      _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
-      _reconnectTimer.stop();
-      _reconnectTimer = null;
+
+      if(_reconnectTimer) {
+        _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
+        _reconnectTimer.stop();
+        _reconnectTimer = null;
+      }
     }
 
     public function deliver(rpcObject:RpcObject):void {
