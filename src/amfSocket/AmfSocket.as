@@ -1,5 +1,7 @@
 package amfSocket
 {
+  import amfSocket.events.AmfSocketEvent;
+
   import flash.events.Event;
   import flash.events.EventDispatcher;
   import flash.events.IOErrorEvent;
@@ -7,7 +9,6 @@ package amfSocket
   import flash.events.SecurityErrorEvent;
   import flash.net.Socket;
   import flash.utils.ByteArray;
-  import amfSocket.events.AmfSocketEvent;
 
   public class AmfSocket extends EventDispatcher
   {
@@ -15,10 +16,24 @@ package amfSocket
     // Instance variables.
     //
 
+    private static var _logger:Object;
+    public static function set logger(value:Object):void { _logger = value; }
+    public static function get logger():Object { return _logger; }
+
+    public function log(message:String):void {
+      var foo:Object = _logger;
+
+      if(!_logger)
+        return;
+
+      _logger.debug(message);
+    }
+
     private var _host:String = null;
     private var _port:int = 0;
     private var _socket:Socket = null;
     private var _objectLength:int = -1;
+    private var _buffer:ByteArray = new ByteArray();
 
     //
     // Constructor.
@@ -108,10 +123,14 @@ package amfSocket
     //
 
     private function socket_connect(event:Event):void {
+      log('Connected.');
+
       dispatchEvent(new AmfSocketEvent(AmfSocketEvent.CONNECTED));
     }
 
     private function socket_disconnect(event:Event):void {
+      log('Disconnected.');
+
       removeEventListeners();
       _socket = null;
 
@@ -119,37 +138,57 @@ package amfSocket
     }
 
     private function socket_ioError(event:IOErrorEvent):void {
+      log('IO Error.');
+
       dispatchEvent(new AmfSocketEvent(AmfSocketEvent.IO_ERROR));
     }
 
     private function socket_securityError(event:SecurityErrorEvent):void {
+      log('Security Error.');
+
       dispatchEvent(new AmfSocketEvent(AmfSocketEvent.SECURITY_ERROR));
     }
 
     private function socket_socketData(event:ProgressEvent):void {
-      while(true) {
-        // Read header.
-        if( (_objectLength == -1) && (_socket.bytesAvailable >= 4) ) {
-          _objectLength = _socket.readUnsignedInt();
-        }
-        else
-          return;
+      log('Received Data. bytesAvailable=' + _socket.bytesAvailable);
 
-        // Read payload.
-        if( (_objectLength >= 0) && (_socket.bytesAvailable >= _objectLength) ) {
-          var byteArray:ByteArray = new ByteArray();
-          _socket.readBytes(byteArray, 0, _objectLength);
+      // Append socket data to buffer.
+      _buffer.position = 0;
+      _socket.readBytes(_buffer, _buffer.length, _socket.bytesAvailable);
 
-          byteArray.position = 0;
-          var object:* = byteArray.readObject();
-
-          _objectLength = -1;
-
-          dispatchEvent(new AmfSocketEvent(AmfSocketEvent.RECEIVED_OBJECT, object));
-        }
-        else
-          return;
+      // Process any buffered objects.
+      var object:* = readBufferedObject();
+      while(object) {
+        log('Received Object.');
+        dispatchEvent(new AmfSocketEvent(AmfSocketEvent.RECEIVED_OBJECT, object));
+        object = readBufferedObject();
       }
+    }
+
+    private function readBufferedObject():* {
+      _buffer.position = 0;
+
+      if(_buffer.length >= 4) {
+        var payloadSize:int = _buffer.readUnsignedInt();
+
+        if(_buffer.length >= payloadSize + 4) {
+          var object:* = _buffer.readObject();
+          shiftBuffer(4 + payloadSize);
+
+          return object;
+        }
+
+        return null;
+      }
+
+      return null;
+    }
+
+    private function shiftBuffer(count:int):void {
+      _buffer.position = count;
+      var tmpBuffer:ByteArray = new ByteArray();
+      _buffer.readBytes(tmpBuffer);
+      _buffer = tmpBuffer;
     }
   }
 }
