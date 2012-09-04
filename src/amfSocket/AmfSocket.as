@@ -185,8 +185,9 @@ package amfSocket
     }
 
     private function shiftBuffer(count:int):void {
-      _buffer.position = count;
       var tmpBuffer:ByteArray = new ByteArray();
+
+      _buffer.position = count;
       _buffer.readBytes(tmpBuffer);
       _buffer = tmpBuffer;
     }
