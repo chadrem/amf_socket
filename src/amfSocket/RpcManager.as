@@ -10,6 +10,8 @@ package amfSocket
 
   import mx.messaging.channels.StreamingAMFChannel;
 
+  import org.osmf.logging.Logger;
+
   public class RpcManager extends EventDispatcher
   {
     //
@@ -23,6 +25,7 @@ package amfSocket
     private var _state:String = 'initialized'; // Valid states: initialized, disconnected, connected, failed, connecting, disposed.
     private var _reconnectTimer:Timer = null;
     private var _requests:Dictionary = new Dictionary();
+    private var _latency:Number = 0.0;
 
     //
     // Constructor.
@@ -47,6 +50,12 @@ package amfSocket
         _reconnectTimer.start();
       }
     }
+
+    //
+    // Getters and setters.
+    //
+
+    public function get latency():Number { return _latency; }
 
     //
     // Public methods.
@@ -133,7 +142,13 @@ package amfSocket
     }
 
     protected function received_request_handler(request:RpcReceivedRequest):void {
-      dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, request));
+      switch(request.command) {
+        case 'amf_socket_ping':
+          respond(request, 'pong');
+          break;
+        default:
+          dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, request));
+      }
     }
 
     //
