@@ -13,6 +13,7 @@ package amfSocket.events
     public static const FAILED:String = 'RPC_MANAGER_EVENT_FAILED';
     public static const RECEIVED_REQUEST:String = 'RPC_MANAGER_RECEIVED_REQUEST';
     public static const RECEIVED_MESSAGE:String = 'RPC_MANAGER_RECEIVED_MESSAGE';
+    public static const RECEIVED_PING:String = 'RPC_MANAGER_RECEIVED_PING';
 
     //
     // Instance variables.

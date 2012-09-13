@@ -145,6 +145,7 @@ package amfSocket
       switch(request.command) {
         case 'amf_socket_ping':
           respond(request, 'pong');
+          dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_PING, request.params));
           break;
         default:
           dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, request));
