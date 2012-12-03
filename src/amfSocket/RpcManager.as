@@ -233,9 +233,6 @@ package amfSocket
       if(!data.response.hasOwnProperty('result'))
         return false;
 
-      if(!(data.response.result is String))
-        return false;
-
       if(!_requests.hasOwnProperty(data.response.messageId))
         return false;
 
