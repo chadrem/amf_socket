@@ -8,10 +8,6 @@ package amfSocket
   import flash.utils.Dictionary;
   import flash.utils.Timer;
 
-  import mx.messaging.channels.StreamingAMFChannel;
-
-  import org.osmf.logging.Logger;
-
   public class RpcManager extends EventDispatcher
   {
     //
