@@ -189,7 +189,7 @@ package amfSocket
     }
 
     private function cleanUp(reason:String=null):void {
-      if(!_socket) {
+      if(_socket) {
         removeSocketEventListeners();
         _socket.disconnect();
         _socket = null;
