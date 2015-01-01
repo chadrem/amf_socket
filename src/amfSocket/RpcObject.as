@@ -13,6 +13,8 @@ package amfSocket
     private var _command:String = null;
     private var _params:Object = null;
     private var _state:String = 'initialized'; // Valid states: initialized, delivered, succeeded, failed.
+    private var _onDelivered:Function = null;
+    private var _onFailed:Function = null;
 
     //
     // Constructor.
@@ -45,6 +47,10 @@ package amfSocket
 
     public function set state(value:String):void { _state = value; }
     public function get state():String { return _state; }
+
+    public function set onDelivered(value:Function):void { _onDelivered = value; }
+
+    public function set onFailed(value:Function):void { _onFailed = value; }
 
     //
     // Public methods.
@@ -99,6 +105,8 @@ package amfSocket
     public function __signalDelivered__():void {
       if(isInitialized()) {
         _state = 'delivered';
+        if(_onDelivered)
+          _onDelivered();
         dispatchEvent(new RpcObjectEvent(RpcObjectEvent.DELIVERED));
       }
       else
@@ -108,6 +116,8 @@ package amfSocket
     public function __signalFailed__(reason:String=null):void {
       if(isDelivered()) {
         _state = 'failed';
+        if(_onFailed)
+          _onFailed();
         dispatchEvent(new RpcObjectEvent(RpcObjectEvent.FAILED, reason));
       }
       else

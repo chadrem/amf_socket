@@ -40,11 +40,7 @@ package amfSocket
       if(options['autoReconnect'] == null)
         options['autoReconnect'] = true
 
-      if(options['autoReconnect']) {
-        _reconnectTimer = new Timer(3000, 0);
-        _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
-        _reconnectTimer.start();
-      }
+      autoReconnect = !!options['autoReconnect'];
     }
 
     //
@@ -52,6 +48,11 @@ package amfSocket
     //
 
     public function get latency():Number { return _latency; }
+
+    public function get autoReconnect():Boolean { return !!_reconnectTimer; }
+    public function set autoReconnect(val:Boolean):void {
+      (val) ? autoReconnectStart() : autoReconnectStop();
+    }
 
     //
     // Public methods.
@@ -127,6 +128,23 @@ package amfSocket
       object.response.result = result;
 
       _socket.sendObject(object);
+    }
+
+    public function sendMessage(command:String, params:Object, onFailed:Function):void {
+      var message:RpcMessage = new RpcMessage(command, params);
+
+      message.onFailed = onFailed;
+
+      deliver(message);
+    }
+
+    public function sendRequest(command:String, params:Object, onSucceeded:Function, onFailed:Function):void {
+      var request:RpcRequest = new RpcRequest(command, params);
+
+      request.onSucceeded = onSucceeded;
+      request.onFailed = onFailed;
+
+      deliver(request);
     }
 
     //
@@ -302,6 +320,23 @@ package amfSocket
         return false;
 
       return true;
+    }
+
+    private function autoReconnectStart():void {
+      if(_reconnectTimer)
+        return;
+
+      _reconnectTimer = new Timer(3000, 0);
+      _reconnectTimer.addEventListener(TimerEvent.TIMER, reconnectTimer_timer);
+      _reconnectTimer.start();
+    }
+
+    private function autoReconnectStop():void {
+      if(!_reconnectTimer)
+        return;
+
+      _reconnectTimer.stop();
+      _reconnectTimer = null;
     }
 
     //

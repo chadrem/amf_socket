@@ -5,6 +5,12 @@ package amfSocket
   public class RpcRequest extends RpcObject
   {
     //
+    // Instance variables.
+    //
+
+    private var _onSucceeded:Function = null;
+
+    //
     // Constructor.
     //
 
@@ -25,6 +31,12 @@ package amfSocket
     }
 
     //
+    // Getters and setters.
+    //
+
+    public function set onSucceeded(value:Function):void { _onSucceeded = value; }
+
+    //
     // Signals.
     // Even though these are public, they should only be called by the RPC Manager.
     // Your user code should never call them directly.
@@ -33,6 +45,8 @@ package amfSocket
     public function __signalSucceeded__(object:Object):void {
       if(isDelivered()) {
         state = 'succeeded';
+        if(_onSucceeded)
+          _onSucceeded(object);
         dispatchEvent(new RpcObjectEvent(RpcObjectEvent.SUCCEEDED, object));
       }
       else
