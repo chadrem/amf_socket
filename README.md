@@ -6,60 +6,15 @@ Using this library you can easily add event driven network functionality to your
 High performance and low latency is accomplished through the use of persistent TCP/IP sockets and Flash's native serialization format (AMF).
 Due to the use of AMF, you can send primitives, hashes, arrays, and even your custom classes over the network.
 AMF Socket tries to be the "easy button" for Flash networking by hiding as many details as possible.
+Additionally, you can use any encoder/decoder functions you want in case you prefer JSON, MessagePack, etc.
 
-## Example (Higher level AMF RPC layer)
+## Examples
 
-This is the API layer you normally use in your applications.
-It hides all of the networking details and presents you with a simple API for both requests and messages.
-
-    var manager:RpcManager = new RpcManager('localhost', 9000);
-
-    manager.addEventListener(RpcManagerEvent.CONNECTED, function(event:RpcManagerEvent):void {
-      trace('connected');
-
-      //
-      // SEND REQUEST: Requests follow the request/response pattern similar to HTTP.
-      //
-      var request:RpcRequest = new RpcRequest('hello', {'someData': ['foobar', 5]});
-
-      request.addEventListener(RpcObjectEvent.SUCCEEDED, function(event:RpcObjectEvent):void {
-        trace(event.data);  // Reply sent from the server.
-      });
-
-      request.addEventListener(RpcObjectEvent.FAILED, function(event:RpcObjectEvent):void {
-        trace('request failure');
-      });
-
-      manager.deliver(request);
-
-      //
-      // SEND MESSAGE: Messages are fire and forget.
-      //
-      var message:RpcMessage = new RpcMessage('hello', {'someData': ['foobar', 5]});
-
-      manager.deliver(message);
-    });
-
-    //
-    // RECEIVE REQUEST: Receive a request from the server.  AmfSocket is bi-directional.
-    //
-    manager.addEventListener(RpcManagerEvent.RECEIVED_REQUEST, function(event:RpcManagerEvent):void {
-      trace(event.data); // Received request.
-      manager.respond(event.data as RpcReceivedRequest, 'yeeeeeehawww!');
-    });
-
-    //
-    // RECEIVE MESSAGE: Receive a message from the server.  No need to reply.
-    //
-    manager.addEventListener(RpcManagerEvent.RECEIVED_MESSAGE, function(event:RpcManagerEvent):void {
-      trace(event.data); // Received message.
-    });
-
-    manager.connect();
+Coming soon.
 
 ## Requests VS Messages
 
-AMF Socket has two fundamental forms of communcation.
+AMF Socket has two fundamental forms of communication.
 Depending on your application, you can choose to use one or both at the same time.
 
 ### Requests
@@ -72,37 +27,6 @@ An example use case is asking your server to send back the result of a database 
 Messages are fire and forget.
 Unlike requests, you can't respond to a message.
 Use cases include push notifications, chat messages, and stock tickers.
-
-## Example (lower level AMF socket layer)
-
-The lower layer is responsible for sending and receiving messages over the network.
-You normally let the RPC layer take care of these details for you.
-The main advantage of using this layer directly is slightly less overhead.
-It allows you to quickly implement 'fire and forget' style network protocols.
-
-    var sock:AmfSocket = new AmfSocket('localhost', 9000);
-    sock.addEventListener(AmfSocketEvent.CONNECTED, function(event:AmfSocketEvent):void {
-      trace('connected');
-      sock.sendObject({'someData': ['foobar', 5]});
-    });
-
-    sock.addEventListener(AmfSocketEvent.DISCONNECTED, function(event:AmfSocketEvent):void {
-      trace('disconnected');
-    });
-
-    sock.addEventListener(AmfSocketEvent.IO_ERROR, function(event:AmfSocketEvent):void {
-      trace('io error');
-    });
-
-    sock.addEventListener(AmfSocketEvent.RECEIVED_OBJECT, function(event:AmfSocketEvent):void {
-      trace('received object');
-    });
-
-    sock.addEventListener(AmfSocketEvent.SECURITY_ERROR, function(event:AmfSocketEvent):void {
-      trace('security error');
-    });
-
-    sock.connect();
 
 ## Class Mapper
 
@@ -123,14 +47,7 @@ In order to use class mapping, you must must perform a number of steps for each 
 
 * Map your class in the server code (details are specific to each server side implementation of AMF).
 
-* Create appopriate instance variables, getters, and setters (these will be serialized).
-
-## Future Features
-
-* Periodic heartbeats for detecting failed connections.
-* Automatic latency computation (useful for games that want to display a ping time).
-* RPC timeouts (global and per request).
-* Auto disconnect/reconnect based on heartbeats (important for low quality mobile networks).
+* Create appropriate instance variables, getters, and setters (these will be serialized).
 
 ## Server Implementations
 
@@ -149,4 +66,4 @@ For more information on AMF: [http://en.wikipedia.org/wiki/Action_Message_Format
 
 ## Copyright
 
-Copyright (c) 2012 Chad Remesch. See LICENSE.txt for details.
+Copyright (c) 2012-2014 Chad Remesch. See LICENSE.txt for details.

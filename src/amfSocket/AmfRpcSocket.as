@@ -8,7 +8,7 @@ package amfSocket
   import flash.utils.Dictionary;
   import flash.utils.Timer;
 
-  public class RpcManager extends EventDispatcher
+  public class AmfRpcSocket extends EventDispatcher
   {
     //
     // Instance variables.
@@ -27,7 +27,7 @@ package amfSocket
     // Constructor.
     //
 
-    public function RpcManager(host:String, port:int, options:Object=null) {
+    public function AmfRpcSocket(host:String, port:int, options:Object=null) {
       super();
 
       _host = host;

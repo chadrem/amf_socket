@@ -17,12 +17,13 @@ package amfSocket
     //
 
     private static var _logger:Object;
+    private static var _encoder:Function;
+    private static var _decoder:Function;
+
     public static function set logger(value:Object):void { _logger = value; }
     public static function get logger():Object { return _logger; }
 
     public function log(message:String):void {
-      var foo:Object = _logger;
-
       if(!_logger)
         return;
 
@@ -32,7 +33,6 @@ package amfSocket
     private var _host:String = null;
     private var _port:int = 0;
     private var _socket:Socket = null;
-    private var _objectLength:int = -1;
     private var _buffer:ByteArray = new ByteArray();
 
     //
@@ -43,6 +43,16 @@ package amfSocket
       _host = host;
       _port = port;
     }
+
+    //
+    // Getters and setters.
+    //
+
+    public static function get encoder():Function { return _encoder; }
+    public static function set encoder(value:Function):void { _encoder = value; }
+
+    public static function get decoder():Function { return _decoder; }
+    public static function set decoder(value:Function):void { _decoder = value; }
 
     //
     // Public methods.
@@ -86,6 +96,27 @@ package amfSocket
     }
 
     //
+    // Protected methods.
+    //
+
+    protected function encodeObject(object:*):ByteArray {
+      if(_encoder)
+        return _encoder(object);
+
+      var byteArray:ByteArray = new ByteArray();
+      byteArray.writeObject(object);
+
+      return byteArray;
+    }
+
+    protected function decodeByteArray(bytes:ByteArray):Object {
+      if(_decoder)
+        return _decoder(bytes);
+
+      return bytes.readObject();
+    }
+
+    //
     // Private methods.
     //
 
@@ -109,13 +140,6 @@ package amfSocket
       _socket.removeEventListener(IOErrorEvent.IO_ERROR, socket_ioError);
       _socket.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, socket_securityError);
       _socket.removeEventListener(ProgressEvent.SOCKET_DATA, socket_socketData);
-    }
-
-    private function encodeObject(object:*):ByteArray {
-      var byteArray:ByteArray = new ByteArray();
-      byteArray.writeObject(object);
-
-      return byteArray;
     }
 
     //
@@ -172,7 +196,7 @@ package amfSocket
         var payloadSize:int = _buffer.readUnsignedInt();
 
         if(_buffer.length >= payloadSize + 4) {
-          var object:* = _buffer.readObject();
+          var object:* = decodeByteArray(_buffer);
           shiftBuffer(4 + payloadSize);
 
           return object;
