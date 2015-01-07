@@ -1,7 +1,7 @@
 package amfSocket.events {
 import flash.events.Event;
 
-public class RpcManagerEvent extends Event {
+public class AmfRpcSocketEvent extends Event {
   //
   // Constants.
   //
@@ -23,7 +23,7 @@ public class RpcManagerEvent extends Event {
   // Constructor.
   //
 
-  public function RpcManagerEvent(type:String, data:Object = null, bubbles:Boolean = false, cancelable:Boolean = false) {
+  public function AmfRpcSocketEvent(type:String, data:Object = null, bubbles:Boolean = false, cancelable:Boolean = false) {
     _data = data;
 
     super(type, bubbles, cancelable);

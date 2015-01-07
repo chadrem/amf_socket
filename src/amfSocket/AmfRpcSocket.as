@@ -1,6 +1,6 @@
 package amfSocket {
+import amfSocket.events.AmfRpcSocketEvent;
 import amfSocket.events.AmfSocketEvent;
-import amfSocket.events.RpcManagerEvent;
 
 import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
@@ -155,17 +155,17 @@ public class AmfRpcSocket extends EventDispatcher {
   //
 
   protected function received_message_handler(message:RpcReceivedMessage):void {
-    dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_MESSAGE, message));
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_MESSAGE, message));
   }
 
   protected function received_request_handler(request:RpcReceivedRequest):void {
     switch (request.command) {
       case 'amf_socket_ping':
         respond(request, 'pong');
-        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_PING, request.params));
+        dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_PING, request.params));
         break;
       default:
-        dispatchEvent(new RpcManagerEvent(RpcManagerEvent.RECEIVED_REQUEST, request));
+        dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_REQUEST, request));
     }
   }
 
@@ -348,12 +348,12 @@ public class AmfRpcSocket extends EventDispatcher {
 
   private function socket_connected(event:AmfSocketEvent):void {
     _state = 'connected';
-    dispatchEvent(new RpcManagerEvent(RpcManagerEvent.CONNECTED));
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.CONNECTED));
   }
 
   private function socket_disconnected(event:AmfSocketEvent):void {
     _state = 'disconnected';
-    dispatchEvent(new RpcManagerEvent(RpcManagerEvent.DISCONNECTED));
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.DISCONNECTED));
     cleanUp();
   }
 
@@ -377,13 +377,13 @@ public class AmfRpcSocket extends EventDispatcher {
 
   private function socket_ioError(event:AmfSocketEvent):void {
     _state = 'failed';
-    dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.FAILED));
     cleanUp('ioError');
   }
 
   private function socket_securityError(event:AmfSocketEvent):void {
     _state = 'failed';
-    dispatchEvent(new RpcManagerEvent(RpcManagerEvent.FAILED));
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.FAILED));
     cleanUp('securityError');
   }
 
