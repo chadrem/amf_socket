@@ -11,6 +11,12 @@ import flash.utils.ByteArray;
 
 public class AmfSocket extends EventDispatcher {
   //
+  // Constants.
+  //
+
+  public static const DEFAULT_CONNECT_TIMEOUT:int = 20; // Seconds.
+
+  //
   // Instance variables.
   //
 
@@ -37,6 +43,7 @@ public class AmfSocket extends EventDispatcher {
   private var _port:int = 0;
   private var _socket:Socket = null;
   private var _buffer:ByteArray = new ByteArray();
+  private var _timeout:int = DEFAULT_CONNECT_TIMEOUT;
 
   //
   // Constructor.
@@ -67,6 +74,14 @@ public class AmfSocket extends EventDispatcher {
     _decoder = value;
   }
 
+  public function get timeout():int {
+    return _timeout;
+  }
+
+  public function set timeout(value:int):void {
+    _timeout = value;
+  }
+
   //
   // Public methods.
   //
@@ -76,6 +91,7 @@ public class AmfSocket extends EventDispatcher {
       throw new Error('Can not connect an already connected socket.');
 
     _socket = new Socket();
+    _socket.timeout = _timeout * 1000;
     addEventListeners();
     _socket.connect(_host, _port);
   }

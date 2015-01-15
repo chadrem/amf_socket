@@ -20,11 +20,15 @@ public class AmfRpcSocket extends EventDispatcher {
   private var _reconnectTimer:Timer = null;
   private var _requests:Dictionary = new Dictionary();
   private var _latency:Number = 0.0;
+  private var _requestTimer:Timer = null;
 
   //
   // Constructor.
   //
 
+  // Valid options:
+  //   autoReconnect (boolean).
+  //   connectTimeout (integer seconds).
   public function AmfRpcSocket(host:String, port:int, options:Object = null) {
     super();
 
@@ -36,7 +40,7 @@ public class AmfRpcSocket extends EventDispatcher {
       options = {};
 
     if (options['autoReconnect'] == null)
-      options['autoReconnect'] = true
+      options['autoReconnect'] = true;
 
     autoReconnect = !!options['autoReconnect'];
   }
@@ -100,13 +104,9 @@ public class AmfRpcSocket extends EventDispatcher {
   }
 
   public function dispose():void {
+    autoReconnectStop();
+    requestTimerStop();
     disconnect();
-
-    if (_reconnectTimer) {
-      _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
-      _reconnectTimer.stop();
-      _reconnectTimer = null;
-    }
   }
 
   public function deliver(rpcObject:RpcObject):void {
@@ -141,11 +141,12 @@ public class AmfRpcSocket extends EventDispatcher {
     deliver(message);
   }
 
-  public function sendRequest(command:String, params:Object, onSucceeded:Function, onFailed:Function):void {
+  public function sendRequest(command:String, params:Object, onSucceeded:Function, onFailed:Function, timeout:int = 0):void {
     var request:RpcRequest = new RpcRequest(command, params);
 
     request.onSucceeded = onSucceeded;
     request.onFailed = onFailed;
+    request.timeout = timeout;
 
     deliver(request);
   }
@@ -200,6 +201,10 @@ public class AmfRpcSocket extends EventDispatcher {
     _state = 'connecting';
 
     _socket = new AmfSocket(_host, _port);
+
+    if (_options['connectTimeout'])
+      _socket.timeout = _options['connectTimeout'];
+
     addSocketEventListeners();
     _socket.connect();
   }
@@ -215,6 +220,8 @@ public class AmfRpcSocket extends EventDispatcher {
       _socket.disconnect();
       _socket = null;
     }
+
+    requestTimerStop();
 
     for (var messageId:String in _requests) {
       var request:RpcRequest = _requests[messageId];
@@ -339,7 +346,36 @@ public class AmfRpcSocket extends EventDispatcher {
       return;
 
     _reconnectTimer.stop();
+    _reconnectTimer.removeEventListener(TimerEvent.TIMER, reconnectTimer_timer);
     _reconnectTimer = null;
+  }
+
+  private function requestTimerStart():void {
+    if (_requestTimer)
+      return;
+
+    _requestTimer = new Timer(1000, 0);
+    _requestTimer.addEventListener(TimerEvent.TIMER, requestTimer_timer);
+    _requestTimer.start();
+  }
+
+  private function requestTimerStop():void {
+    if (!_requestTimer)
+      return;
+
+    _requestTimer.stop();
+    _requestTimer.removeEventListener(TimerEvent.TIMER, requestTimer_timer);
+    _requestTimer = null;
+  }
+
+  private function timeoutRequests():void {
+    for (var messageId:String in _requests) {
+      var request:RpcRequest = _requests[messageId];
+      if (request.isTimedOut()) {
+        delete _requests[messageId];
+        request.__signalFailed__('timeout');
+      }
+    }
   }
 
   //
@@ -348,6 +384,7 @@ public class AmfRpcSocket extends EventDispatcher {
 
   private function socket_connected(event:AmfSocketEvent):void {
     _state = 'connected';
+    requestTimerStart();
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.CONNECTED));
   }
 
@@ -391,6 +428,10 @@ public class AmfRpcSocket extends EventDispatcher {
     if (isFailed() || isDisconnected()) {
       reconnect();
     }
+  }
+
+  private function requestTimer_timer(event:TimerEvent):void {
+    timeoutRequests();
   }
 }
 }

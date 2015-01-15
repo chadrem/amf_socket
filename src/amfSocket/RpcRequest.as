@@ -7,6 +7,8 @@ public class RpcRequest extends RpcObject {
   //
 
   private var _onSucceeded:Function = null;
+  private var _timeout:int = 0;
+  private var _timeoutAt:Date;
 
   //
   // Constructor.
@@ -17,7 +19,7 @@ public class RpcRequest extends RpcObject {
   }
 
   public override function toObject():Object {
-    var object:Object = {}
+    var object:Object = {};
 
     object.type = 'rpcRequest';
     object.request = {};
@@ -28,12 +30,25 @@ public class RpcRequest extends RpcObject {
     return object;
   }
 
+  public function isTimedOut():Boolean {
+    return _timeoutAt ? (new Date()).getTime() > _timeoutAt.getTime() : false;
+  }
+
   //
   // Getters and setters.
   //
 
   public function set onSucceeded(value:Function):void {
     _onSucceeded = value;
+  }
+
+  public function set timeout(seconds:int):void {
+    if (seconds <= 0)
+      return;
+
+    _timeout = seconds;
+    _timeoutAt = new Date();
+    _timeoutAt.setTime(_timeoutAt.getTime() + 1000 * _timeout);
   }
 
   //
