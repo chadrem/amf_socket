@@ -155,11 +155,11 @@ public class AmfRpcSocket extends EventDispatcher {
   // Protected methods.
   //
 
-  protected function received_message_handler(message:RpcReceivedMessage):void {
+  protected function receivedMessageHandler(message:RpcReceivedMessage):void {
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_MESSAGE, message));
   }
 
-  protected function received_request_handler(request:RpcReceivedRequest):void {
+  protected function receivedRequestHandler(request:RpcReceivedRequest):void {
     switch (request.command) {
       case 'amf_socket_ping':
         respond(request, 'pong');
@@ -404,11 +404,11 @@ public class AmfRpcSocket extends EventDispatcher {
     }
     else if (isValidRpcRequest(data)) {
       var received_request:RpcReceivedRequest = new RpcReceivedRequest(data);
-      received_request_handler(received_request);
+      receivedRequestHandler(received_request);
     }
     else if (isValidRpcMessage(data)) {
       var received_message:RpcReceivedMessage = new RpcReceivedMessage(data);
-      received_message_handler(received_message);
+      receivedMessageHandler(received_message);
     }
   }
 
