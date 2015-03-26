@@ -40,7 +40,7 @@ public class AmfRpcSocket extends EventDispatcher {
       options = {};
 
     if (options['autoReconnect'] == null)
-      options['autoReconnect'] = true;
+      options['autoReconnect'] = false;
 
     autoReconnect = !!options['autoReconnect'];
   }
