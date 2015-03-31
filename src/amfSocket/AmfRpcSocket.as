@@ -34,15 +34,12 @@ public class AmfRpcSocket extends EventDispatcher {
 
     _host = host;
     _port = port;
-    _options = options;
+    _options = options || {};
 
-    if (options == null)
-      options = {};
+    if (!_options.hasOwnProperty('autoReconnect'))
+      _options['autoReconnect'] = false;
 
-    if (options['autoReconnect'] == null)
-      options['autoReconnect'] = false;
-
-    autoReconnect = !!options['autoReconnect'];
+    autoReconnect = !!_options['autoReconnect'];
   }
 
   //
@@ -162,12 +159,25 @@ public class AmfRpcSocket extends EventDispatcher {
   protected function receivedRequestHandler(request:RpcReceivedRequest):void {
     switch (request.command) {
       case 'amf_socket_ping':
-        respond(request, 'pong');
-        dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_PING, request.params));
+        receivedPingHandler(request);
         break;
       default:
         dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_REQUEST, request));
     }
+  }
+
+  protected function receivedPingHandler(request:RpcReceivedRequest):void {
+    respond(request, 'pong');
+    dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.RECEIVED_PING, request.params));
+  }
+
+  protected function connected():void {
+  }
+
+  protected function disconnected():void {
+  }
+
+  protected function failed(reason:String = null):void {
   }
 
   //
@@ -386,12 +396,14 @@ public class AmfRpcSocket extends EventDispatcher {
     _state = 'connected';
     requestTimerStart();
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.CONNECTED));
+    connected();
   }
 
   private function socket_disconnected(event:AmfSocketEvent):void {
     _state = 'disconnected';
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.DISCONNECTED));
-    cleanUp();
+    cleanUp('unknown');
+    disconnected();
   }
 
   private function socket_receivedObject(event:AmfSocketEvent):void {
@@ -416,12 +428,14 @@ public class AmfRpcSocket extends EventDispatcher {
     _state = 'failed';
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.FAILED));
     cleanUp('ioError');
+    failed('ioError');
   }
 
   private function socket_securityError(event:AmfSocketEvent):void {
     _state = 'failed';
     dispatchEvent(new AmfRpcSocketEvent(AmfRpcSocketEvent.FAILED));
     cleanUp('securityError');
+    failed('securityError');
   }
 
   private function reconnectTimer_timer(event:TimerEvent):void {

@@ -23,7 +23,7 @@ public class RpcObject extends EventDispatcher {
     super();
 
     _command = command;
-    _params = params;
+    _params = params || {};
     _messageId = genMessageId();
   }
 

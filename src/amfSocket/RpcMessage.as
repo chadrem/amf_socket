@@ -9,7 +9,7 @@ public class RpcMessage extends RpcObject {
   }
 
   public override function toObject():Object {
-    var object:Object = {}
+    var object:Object = {};
 
     object.type = 'rpcMessage';
     object.message = {};

@@ -6,12 +6,12 @@ public class AmfRpcSocketEvent extends Event {
   // Constants.
   //
 
-  public static const CONNECTED:String = 'RPC_MANAGER_EVENT_CONNECTED';
-  public static const DISCONNECTED:String = 'RPC_MANAGER_EVENT_DISCONNECTED';
-  public static const FAILED:String = 'RPC_MANAGER_EVENT_FAILED';
-  public static const RECEIVED_REQUEST:String = 'RPC_MANAGER_RECEIVED_REQUEST';
-  public static const RECEIVED_MESSAGE:String = 'RPC_MANAGER_RECEIVED_MESSAGE';
-  public static const RECEIVED_PING:String = 'RPC_MANAGER_RECEIVED_PING';
+  public static const CONNECTED:String = 'AMF_RPC_SOCKET_EVENT_CONNECTED';
+  public static const DISCONNECTED:String = 'AMF_RPC_SOCKET_EVENT_DISCONNECTED';
+  public static const FAILED:String = 'AMF_RPC_SOCKET_EVENT_FAILED';
+  public static const RECEIVED_REQUEST:String = 'AMF_RPC_SOCKET_RECEIVED_REQUEST';
+  public static const RECEIVED_MESSAGE:String = 'AMF_RPC_SOCKET_RECEIVED_MESSAGE';
+  public static const RECEIVED_PING:String = 'AMF_RPC_SOCKET_RECEIVED_PING';
 
   //
   // Instance variables.
